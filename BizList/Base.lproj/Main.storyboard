@@ -42,6 +42,9 @@
                     <navigationItem key="navigationItem" title="BizList" id="czd-Q8-tIb">
                         <barButtonItem key="rightBarButtonItem" style="plain" systemItem="add" id="66h-Tr-27C">
                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="didTapAddButton:" destination="Nco-Y1-M71" id="kgq-Rt-oaR"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>

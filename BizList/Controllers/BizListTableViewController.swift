@@ -12,6 +12,27 @@ class BizListTableViewController: UITableViewController {
     
     private var bizlistVM: BizListViewModel!
     
+//MARK: IBActions
+    
+    @IBAction func didTapAddButton(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        let alert = UIAlertController(title: "Create New Biz", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add Biz", style: .default) { [weak self] (action) in
+            if let bizTitle = textField.text {
+                self?.bizlistVM.items.append(BizItemViewModel(title: bizTitle))
+                self?.tableView.reloadData()
+            }
+        }
+        
+        alert.addTextField { alertTextField in
+            alertTextField.placeholder = "Please enter new Biz"
+            textField = alertTextField
+        }
+        
+        alert.addAction(action)
+        present(alert, animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.bizlistVM = BizListViewModel()
