@@ -44,6 +44,20 @@ extension BizItemViewModel {
     }
 }
 
+extension BizItemViewModel {
+    func numberOfSection() -> Int {
+        return 1
+    }
+    
+    func numberOfRowsInSection(section: Int) -> Int {
+        return self.tasks.count
+    }
+    
+    func taskAtIndex(index: Int) -> TaskViewModel {
+        return self.tasks[index]
+    }
+}
+
 struct TaskViewModel {
     var title: String
     var isDone: Bool = false

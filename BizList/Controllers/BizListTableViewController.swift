@@ -90,6 +90,6 @@ class BizListTableViewController: UITableViewController {
         bizItem.tasks.append(TaskViewModel(title: "Task 2"))
         bizItem.tasks.append(TaskViewModel(title: "Task 3"))
         bizItem.tasks.append(TaskViewModel(title: "Task 4"))
-        vc.bizItem = bizItem
+        vc.bizItemVM = bizItem
     }
 }
