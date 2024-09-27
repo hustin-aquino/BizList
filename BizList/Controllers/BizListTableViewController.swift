@@ -44,11 +44,11 @@ class BizListTableViewController: UITableViewController {
 // MARK: UITableView DataSource
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return self.bizlistVM.numberOfSection()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return bizlistVM.items.count
+        return self.bizlistVM.numberOfRowsInSection(section: section)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -56,7 +56,40 @@ class BizListTableViewController: UITableViewController {
             fatalError("BizItemCell not registered")
         }
         
-        cell.textLabel?.text = bizlistVM.items[indexPath.row].title
+        let bizItem = bizlistVM.bizItemAtIndex(index: indexPath.row)
+        cell.textLabel?.text = bizItem.title
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.performSegue(withIdentifier: "ShowBizTaskList", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowBizTaskList" {
+            self.prepareSegueForTaskList(with: segue)
+        }
+    }
+    
+    private func prepareSegueForTaskList(with segue: UIStoryboardSegue) {
+        guard let indexPath = self.tableView.indexPathForSelectedRow else {
+            print("No Found Selected Row")
+            return
+        }
+        
+        guard let navigationController = segue.destination as? UINavigationController else {
+            fatalError("Error in Getting Navigation Controller")
+        }
+        
+        guard let vc = navigationController.viewControllers.first as? TaskListViewController else {
+            fatalError("No ViewController found")
+        }
+        
+        var bizItem = bizlistVM.bizItemAtIndex(index: indexPath.row)
+        bizItem.tasks.append(TaskViewModel(title: "Task 1"))
+        bizItem.tasks.append(TaskViewModel(title: "Task 2"))
+        bizItem.tasks.append(TaskViewModel(title: "Task 3"))
+        bizItem.tasks.append(TaskViewModel(title: "Task 4"))
+        vc.bizItem = bizItem
     }
 }

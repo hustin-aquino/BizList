@@ -10,6 +10,7 @@ import UIKit
 
 class TaskListViewController: UITableViewController {
     
+    var bizItem: BizItemViewModel?
     override func viewDidLoad() {
         super.viewDidLoad()
         
