@@ -6,8 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B0E5F1312CA6FCF9000A3610 /* BizListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E5F1302CA6FCF9000A3610 /* BizListTableViewController.swift */; };
+		B0E5F1352CA6FD34000A3610 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E5F1342CA6FD34000A3610 /* TaskListViewController.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B0E5F1132CA6FA45000A3610 /* BizList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BizList.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0E5F1302CA6FCF9000A3610 /* BizListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BizListTableViewController.swift; sourceTree = "<group>"; };
+		B0E5F1342CA6FD34000A3610 /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,6 +52,7 @@
 		B0E5F10A2CA6FA45000A3610 = {
 			isa = PBXGroup;
 			children = (
+				B0E5F12E2CA6FC56000A3610 /* Controllers */,
 				B0E5F1152CA6FA45000A3610 /* BizList */,
 				B0E5F1142CA6FA45000A3610 /* Products */,
 			);
@@ -56,6 +64,15 @@
 				B0E5F1132CA6FA45000A3610 /* BizList.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B0E5F12E2CA6FC56000A3610 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B0E5F1302CA6FCF9000A3610 /* BizListTableViewController.swift */,
+				B0E5F1342CA6FD34000A3610 /* TaskListViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -132,6 +149,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0E5F1312CA6FCF9000A3610 /* BizListTableViewController.swift in Sources */,
+				B0E5F1352CA6FD34000A3610 /* TaskListViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
