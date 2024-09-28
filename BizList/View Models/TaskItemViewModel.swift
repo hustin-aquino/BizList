@@ -12,13 +12,6 @@ struct TaskItemListViewModel {
 }
 
 extension TaskItemListViewModel {
-    init? (taskItems: [TaskItem]) {
-        let itemList = taskItems.map { $0.convertToTaskItemViewModel() }
-        self.items = itemList
-    }
-}
-
-extension TaskItemListViewModel {
     
     func numberOfSections() -> Int {
         return 1
@@ -34,14 +27,15 @@ extension TaskItemListViewModel {
 }
 
 struct TaskItemViewModel {
-    var title: String
-    var isDone: Bool
+    var task: TaskItem
 }
 
-extension TaskItem {
-    func convertToTaskItemViewModel() -> TaskItemViewModel {
-        let item = TaskItemViewModel(title: self.title ?? "", isDone: self.isDone)
-        print("Item: \(item)")
-        return item
+extension TaskItemViewModel {
+    var title: String {
+        return task.title ?? ""
+    }
+    
+    var isDone: Bool {
+        return task.isDone
     }
 }

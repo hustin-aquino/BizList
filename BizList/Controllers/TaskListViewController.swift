@@ -5,9 +5,10 @@
 //  Created by justin.bitancor on 9/27/24.
 //
 
+import CoreData
 import Foundation
 import UIKit
-import CoreData
+
 
 class TaskListViewController: UITableViewController {
     
@@ -19,9 +20,9 @@ class TaskListViewController: UITableViewController {
     
     @IBAction func didTapAddButton(_ sender: UIBarButtonItem) {
         var textField = UITextField()
-        let alert = UIAlertController(title: "Add New Task", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Create Task", style: .default) { [weak self] (action) in
-            guard let self = self, let taskTitle = textField.text else {    
+        let alert = UIAlertController(title: "Create New Task", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add Task", style: .default) { [weak self] (action) in
+            guard let self = self, let bizItemVM = self.bizItemVM, let taskTitle = textField.text else {
                 print("No text entered")
                 return
             }
@@ -29,17 +30,19 @@ class TaskListViewController: UITableViewController {
             let taskItem = TaskItem(context: self.context)
             taskItem.title = taskTitle
             taskItem.isDone = false
+            taskItem.parentBiz = bizItemVM.bizItem
+            
             
             if self.context.hasChanges {
                 self.saveContext()
             }
             
-            self.taskItemListVM.items.append(taskItem.convertToTaskItemViewModel())
+            self.taskItemListVM.items.append(TaskItemViewModel(task: taskItem))
             self.tableView.reloadData()
         }
         
         alert.addTextField { alertTextField in
-            alertTextField.placeholder = "Please enter new Biz"
+            alertTextField.placeholder = "Please enter new Task"
             textField = alertTextField
         }
         
@@ -48,6 +51,9 @@ class TaskListViewController: UITableViewController {
     }
     
     @IBAction func didtapCloseButton(_ sender: UIBarButtonItem) {
+        if context.hasChanges {
+            self.saveContext()
+        }
         self.dismiss(animated: true)
     }
 
@@ -73,16 +79,16 @@ class TaskListViewController: UITableViewController {
         
         let taskItem = self.taskItemListVM.taskItemAt(indexPath: indexPath)
         cell.textLabel?.text = taskItem.title
+        cell.accessoryType = taskItem.isDone ? .checkmark : .none
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        if  cell.accessoryType == .checkmark {
-            cell.accessoryType = .none
-        } else {
-            cell.accessoryType = .checkmark
-        }
+        var taskItem = self.taskItemListVM.taskItemAt(indexPath: indexPath)
+        taskItem.task.isDone.toggle()
+        
+        cell.accessoryType = taskItem.isDone ? .checkmark : .none
         
         self.tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -101,9 +107,12 @@ extension TaskListViewController {
     }
     
     func loadTaskItems() {
+        guard let bizItemVM = self.bizItemVM else { return }
         let request: NSFetchRequest<TaskItem> = TaskItem.fetchRequest()
+        let predicate = NSPredicate(format: "parentBiz == %@", bizItemVM.bizItem)
+        request.predicate = predicate
         do {
-            let taskList = try self.context.fetch(request).map { $0.convertToTaskItemViewModel() }
+            let taskList = try self.context.fetch(request).map { TaskItemViewModel(task: $0) }
             self.taskItemListVM.items = taskList
         } catch {
             let nserror = error as NSError

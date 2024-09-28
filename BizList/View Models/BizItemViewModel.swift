@@ -8,13 +8,7 @@
 import Foundation
 
 struct BizListViewModel {
-    var items: [BizItemViewModel]
-}
-
-extension BizListViewModel {
-    init () {
-        self.items = [BizItemViewModel]()
-    }
+    var items: [BizItemViewModel] = [BizItemViewModel]()
 }
 
 extension BizListViewModel {
@@ -32,6 +26,11 @@ extension BizListViewModel {
 }
 
 struct BizItemViewModel {
-    var title: String
+    var bizItem: BizItem
 }
 
+extension BizItemViewModel {
+    var name: String {
+        return self.bizItem.name ?? ""
+    }
+}

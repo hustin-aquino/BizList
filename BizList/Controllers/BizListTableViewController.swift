@@ -5,12 +5,15 @@
 //  Created by justin.bitancor on 9/27/24.
 //
 
+import CoreData
 import Foundation
 import UIKit
 
+
 class BizListTableViewController: UITableViewController {
     
-    private var bizlistVM: BizListViewModel!
+    private var bizlistVM: BizListViewModel = BizListViewModel()
+    var context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
 //MARK: IBActions
     
@@ -18,10 +21,20 @@ class BizListTableViewController: UITableViewController {
         var textField = UITextField()
         let alert = UIAlertController(title: "Create New Biz", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Biz", style: .default) { [weak self] (action) in
-            if let bizTitle = textField.text {
-                self?.bizlistVM.items.append(BizItemViewModel(title: bizTitle))
-                self?.tableView.reloadData()
+            guard let self = self, let bizTitle = textField.text else {
+                print("No text entered")
+                return
             }
+            
+            let bizItem = BizItem(context: self.context)
+            bizItem.name = bizTitle
+            
+            if self.context.hasChanges {
+                self.saveContext()
+            }
+            
+            self.bizlistVM.items.append(BizItemViewModel(bizItem: bizItem))
+            self.tableView.reloadData()
         }
         
         alert.addTextField { alertTextField in
@@ -30,15 +43,12 @@ class BizListTableViewController: UITableViewController {
         }
         
         alert.addAction(action)
-        present(alert, animated: true)
+        present(alert, animated: false)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.bizlistVM = BizListViewModel()
-        self.bizlistVM.items.append(BizItemViewModel(title: "Grocery Store"))
-        self.bizlistVM.items.append(BizItemViewModel(title: "Drug Store"))
-        self.bizlistVM.items.append(BizItemViewModel(title: "Coffee Shop"))
+        self.loadBizItems()
     }
     
 // MARK: UITableView DataSource
@@ -57,7 +67,7 @@ class BizListTableViewController: UITableViewController {
         }
         
         let bizItem = bizlistVM.bizItemAtIndex(index: indexPath.row)
-        cell.textLabel?.text = bizItem.title
+        cell.textLabel?.text = bizItem.name
         return cell
     }
     
@@ -85,7 +95,31 @@ class BizListTableViewController: UITableViewController {
             fatalError("No ViewController found")
         }
         
-        var bizItem = bizlistVM.bizItemAtIndex(index: indexPath.row)
-        vc.bizItemVM = bizItem
+        vc.bizItemVM = bizlistVM.bizItemAtIndex(index: indexPath.row)
+        self.tableView.deselectRow(at: indexPath, animated: true)
     }
 }
+
+//MARK: CoreData Functions
+extension BizListTableViewController {
+    func saveContext() {
+        do {
+            try self.context.save()
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+    }
+    
+    func loadBizItems() {
+        let request: NSFetchRequest<BizItem> = BizItem.fetchRequest()
+        do {
+            let bizList = try self.context.fetch(request).map { BizItemViewModel(bizItem: $0) }
+            self.bizlistVM.items = bizList
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+    }
+}
+

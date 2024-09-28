@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24A335" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="BizItem" representedClassName=".BizItem" syncable="YES" codeGenerationType="class">
+        <attribute name="name" attributeType="String"/>
+        <relationship name="toTaskItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskItem" inverseName="parentBiz" inverseEntity="TaskItem"/>
+    </entity>
     <entity name="TaskItem" representedClassName=".TaskItem" syncable="YES" codeGenerationType="class">
         <attribute name="isDone" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
+        <relationship name="parentBiz" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BizItem" inverseName="toTaskItems" inverseEntity="BizItem"/>
     </entity>
 </model>
