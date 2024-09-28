@@ -7,10 +7,13 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 class TaskListViewController: UITableViewController {
     
+    var taskItemListVM: TaskItemListViewModel = TaskItemListViewModel()
     var bizItemVM: BizItemViewModel?
+    var context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
 //MARK: IBActions
     
@@ -18,11 +21,21 @@ class TaskListViewController: UITableViewController {
         var textField = UITextField()
         let alert = UIAlertController(title: "Add New Task", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Create Task", style: .default) { [weak self] (action) in
-            if let taskTitle = textField.text {
-                let task = TaskItem(title: taskTitle, isDone: false)
-                self?.bizItemVM?.tasks.append(TaskViewModel(taskItem: task))
-                self?.tableView.reloadData()
+            guard let self = self, let taskTitle = textField.text else {    
+                print("No text entered")
+                return
             }
+            
+            let taskItem = TaskItem(context: self.context)
+            taskItem.title = taskTitle
+            taskItem.isDone = false
+            
+            if self.context.hasChanges {
+                self.saveContext()
+            }
+            
+            self.taskItemListVM.items.append(taskItem.convertToTaskItemViewModel())
+            self.tableView.reloadData()
         }
         
         alert.addTextField { alertTextField in
@@ -40,17 +53,17 @@ class TaskListViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.loadTaskItems()
     }
     
 // MARK: UITableView DataSource
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return self.bizItemVM?.numberOfSection() ?? 1
+        return self.taskItemListVM.numberOfSections()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.bizItemVM?.numberOfRowsInSection(section: section) ?? 0
+        return self.taskItemListVM.numberOfRowsInSection(section)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -58,8 +71,8 @@ class TaskListViewController: UITableViewController {
             fatalError("TaskItemCell not registered")
         }
         
-        let bizItem = bizItemVM?.taskAtIndex(index: indexPath.row)
-        cell.textLabel?.text = bizItem?.title
+        let taskItem = self.taskItemListVM.taskItemAt(indexPath: indexPath)
+        cell.textLabel?.text = taskItem.title
         return cell
     }
     
@@ -74,4 +87,27 @@ class TaskListViewController: UITableViewController {
         self.tableView.deselectRow(at: indexPath, animated: true)
     }
     
+}
+
+//MARK: CoreData Functions
+extension TaskListViewController {
+    func saveContext() {
+        do {
+            try self.context.save()
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+    }
+    
+    func loadTaskItems() {
+        let request: NSFetchRequest<TaskItem> = TaskItem.fetchRequest()
+        do {
+            let taskList = try self.context.fetch(request).map { $0.convertToTaskItemViewModel() }
+            self.taskItemListVM.items = taskList
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+    }
 }

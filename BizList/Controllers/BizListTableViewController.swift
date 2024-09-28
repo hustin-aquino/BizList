@@ -86,10 +86,6 @@ class BizListTableViewController: UITableViewController {
         }
         
         var bizItem = bizlistVM.bizItemAtIndex(index: indexPath.row)
-        bizItem.tasks.append(TaskViewModel(taskItem: TaskItem(title: "Task 1", isDone: false)))
-        bizItem.tasks.append(TaskViewModel(taskItem: TaskItem(title: "Task 2", isDone: false)))
-        bizItem.tasks.append(TaskViewModel(taskItem: TaskItem(title: "Task 3", isDone: false)))
-        bizItem.tasks.append(TaskViewModel(taskItem: TaskItem(title: "Task 4", isDone: false)))
         vc.bizItemVM = bizItem
     }
 }
