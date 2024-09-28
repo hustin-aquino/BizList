@@ -19,7 +19,8 @@ class TaskListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Task", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Create Task", style: .default) { [weak self] (action) in
             if let taskTitle = textField.text {
-                self?.bizItemVM?.tasks.append(TaskViewModel(title: taskTitle))
+                let task = TaskItem(title: taskTitle, isDone: false)
+                self?.bizItemVM?.tasks.append(TaskViewModel(taskItem: task))
                 self?.tableView.reloadData()
             }
         }

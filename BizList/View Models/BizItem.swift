@@ -59,6 +59,14 @@ extension BizItemViewModel {
 }
 
 struct TaskViewModel {
+    var taskItem: TaskItem
     var title: String
     var isDone: Bool = false
+}
+
+extension TaskViewModel {
+    init (taskItem: TaskItem) {
+        self.taskItem = taskItem
+        self.title = taskItem.title
+    }
 }
